@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.2.6"
+SCRIPT_VERSION="v0.2.8"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -30,7 +30,6 @@ DEPENDENCIES=(
     "unzip"
     "git"
     "jq"
-    "ss"
 )
 
 log() { echo -e "${COLORS[BLUE]}[INFO]${COLORS[RESET]} $*"; }
@@ -51,7 +50,7 @@ update_script() {
     
     if [[ -f "$script_path" ]]; then
         log "Updating the script..."
-        curl -s -o "$script_path" "$SCRIPT_URL"
+        curl -o "$script_path" $SCRIPT_URL
         chmod +x "$script_path"
         success "Script updated to the latest version!"
         echo "Current version: $SCRIPT_VERSION"
@@ -59,6 +58,7 @@ update_script() {
         warn "Script is not installed. Use 'install-script' command to install the script first."
     fi
 }
+
 
 check_dependencies() {
     local missing_deps=()
@@ -83,50 +83,8 @@ is_installed() { [[ -d "$INSTALL_DIR" && -f "$COMPOSE_FILE" ]]; }
 is_running() { docker ps | grep -q "marznode"; }
 
 create_directories() {
-    mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data" "${INSTALL_DIR}/certs"
+    mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data"
 }
-
-# ----- ESSL Installation and SSL Certificate Handling -----
-
-install_essl() {
-    log "Installing the ESSL script..."
-    # Redirect output and errors to a log file for debugging
-    sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/ESSL/master/essl.sh)" @ --install &> "${INSTALL_DIR}/essl_install.log"
-    if [[ $? -eq 0 ]]; then
-        success "ESSL script installed successfully."
-    else
-        error "Failed to install ESSL. Check the log at ${INSTALL_DIR}/essl_install.log for details."
-    fi
-}
-
-prompt_domain_and_generate_cert() {
-    local email="user@gmail.com"  # Replace with your actual email
-    local domain
-    local certs_dir="/var/lib/marznode/certs"
-
-    # Prompt the user to enter their domain
-    read -rp "Enter your domain: " domain
-
-    # Validate the entered domain
-    if [[ -z "$domain" ]]; then
-        error "No domain entered. Exiting."
-    fi
-
-    # Basic domain format validation
-    if ! [[ "$domain" =~ ^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$ ]]; then
-        error "Invalid domain format. Please enter a valid domain (e.g., example.com)."
-    fi
-
-    log "Generating SSL certificates using ESSL..."
-    essl "$email" "$domain" "$certs_dir" &> "${INSTALL_DIR}/essl_generate.log"
-    if [[ $? -eq 0 ]]; then
-        success "SSL certificates generated and stored in $certs_dir."
-    else
-        error "Failed to generate SSL certificates. Check the log at ${INSTALL_DIR}/essl_generate.log for details."
-    fi
-}
-
-# ----- End of ESSL Integration -----
 
 get_certificate() {
     log "Please paste the Marznode certificate from the Marzneshin panel (press Ctrl+D when finished):"
@@ -161,6 +119,7 @@ select_xray_version() {
     done
 }
 
+
 download_xray_core() {
     local version="$1"
     case "$(uname -m)" in
@@ -188,7 +147,8 @@ download_xray_core() {
         'riscv64') arch='riscv64' ;;
         's390x') arch='s390x' ;;
         *)
-        error "Error: The architecture is not supported."
+        print_error "Error: The architecture is not supported."
+        exit 1
         ;;
     esac
     local xray_filename="Xray-linux-${arch}.zip"
@@ -219,9 +179,9 @@ services:
       XRAY_EXECUTABLE_PATH: "/var/lib/marznode/xray"
       XRAY_ASSETS_PATH: "/var/lib/marznode/data"
       XRAY_CONFIG_PATH: "/var/lib/marznode/xray_config.json"
-      SSL_CLIENT_CERT_FILE: "/var/lib/marznode/certs/client.pem"
-      SSL_KEY_FILE: "/var/lib/marznode/certs/server.key"
-      SSL_CERT_FILE: "/var/lib/marznode/certs/server.cert"
+      SSL_CLIENT_CERT_FILE: "/var/lib/marznode/client.pem"
+      SSL_KEY_FILE: "./server.key"
+      SSL_CERT_FILE: "./server.cert"
       HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
       HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
       HYSTERIA_ENABLED: "True"
@@ -241,15 +201,8 @@ install_marznode() {
     create_directories
 
     echo
-    # Install ESSL and generate SSL certificates
-    install_essl
-    prompt_domain_and_generate_cert
+    get_certificate
     echo
-
-    # Existing certificate input step (if needed)
-    # Uncomment the following lines if you still require manual certificate input
-    # get_certificate
-    # echo
 
     local port
     while true; do
@@ -342,11 +295,12 @@ show_status() {
     fi
 
     if is_running; then
-        success "Status: Up and Running [uptime: $(docker ps --filter "name=marznode_marznode_1" --format "{{.Status}}")]"
+        success "Status: Up and Running [uptime: $(docker ps --filter "name=marznode_marznode_1" --format "{{.Status}}")]"        
     else
         error "Status: Stopped"
     fi
 }
+
 
 show_logs() {
     log "Showing MarzNode logs (press Ctrl+C to exit):"
@@ -356,7 +310,7 @@ show_logs() {
 install_script() {
     local script_path="/usr/local/bin/$SCRIPT_NAME"
     
-    curl -s -o "$script_path" "$SCRIPT_URL"
+    curl -s -o "$script_path" $SCRIPT_URL
     chmod +x "$script_path"
     success "Script installed successfully. Script Version: $SCRIPT_VERSION. You can now use '$SCRIPT_NAME' command from anywhere."
 }
@@ -392,6 +346,7 @@ print_help() {
     echo
 }
 
+
 main() {
     check_root
 
@@ -401,17 +356,17 @@ main() {
     fi
 
     case "$1" in
-        install)             install_marznode ;;
-        uninstall)           uninstall_marznode ;;
-        update)              update_marznode ;;
-        start|stop|restart)  manage_service "$1" ;;
-        status)              show_status ;;
+        install)         install_marznode ;;
+        uninstall)       uninstall_marznode ;;
+        update)          update_marznode ;;
+        start|stop|restart) manage_service "$1" ;;
+        status)          show_status ;;
         logs|log)            show_logs ;;
-        version)             show_version ;;
-        install-script)      install_script ;;
-        uninstall-script)    uninstall_script ;;
-        update-script)       update_script ;;
-        help|*)              print_help ;;
+        version)         show_version ;;
+        install-script)  install_script ;;
+        uninstall-script) uninstall_script ;;
+        update-script)   update_script ;;
+        help|*)          print_help ;;
     esac
 }
 
