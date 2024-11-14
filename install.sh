@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.3.3"
+SCRIPT_VERSION="v0.4.0"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -86,7 +86,7 @@ create_directories() {
     mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data" "${INSTALL_DIR}/certs"
 }
 
-# ----- Enhanced ESSL Installation and SSL Certificate Handling -----
+# ----- ESSL Installation and SSL Certificate Handling -----
 
 install_essl() {
     log "Installing the ESSL script..."
@@ -100,7 +100,7 @@ install_essl() {
 }
 
 prompt_domain_and_generate_cert() {
-    local email="user@gmail.com"  # Replace with your actual email
+    local email="your-email@example.com"  # Replace with your actual email
     local domain
     local certs_dir="/var/lib/marznode/certs"
 
@@ -126,7 +126,14 @@ prompt_domain_and_generate_cert() {
     fi
 }
 
-# ----- End of Enhanced ESSL Integration -----
+# ----- End of ESSL Integration -----
+
+get_certificate() {
+    log "Please paste the Marznode certificate from the Marzneshin panel (press Ctrl+D when finished):"
+    cat > "${INSTALL_DIR}/client.pem"
+    echo
+    success "Certificate saved to ${INSTALL_DIR}/client.pem"
+}
 
 show_xray_versions() {
     log "Available Xray versions:"
@@ -238,6 +245,11 @@ install_marznode() {
     install_essl
     prompt_domain_and_generate_cert
     echo
+
+    # Existing certificate input step (if needed)
+    # Uncomment the following lines if you still require manual certificate input
+    # get_certificate
+    # echo
 
     local port
     while true; do
