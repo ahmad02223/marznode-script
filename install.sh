@@ -191,6 +191,24 @@ EOF
     success "Docker Compose file created at $COMPOSE_FILE"
 }
 
+install_essl() {
+    log "Installing ESSL script..."
+    sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/ESSL/master/essl.sh)" @ --install
+    
+    local domain
+    while true; do
+        read -p "Enter your domain: " domain
+        if [[ -n "$domain" ]]; then
+            break
+        else
+            warn "Domain cannot be empty. Please enter a valid domain."
+        fi
+    done
+
+    log "Configuring ESSL for the domain: $domain"
+    essl user@example.com "$domain" /var/lib/marznode/certs || error "ESSL configuration failed"
+    success "ESSL successfully configured for domain $domain"
+    
 install_marznode() {
     if is_installed; then
         warn "MarzNode is already installed. Removing previous installation..."
