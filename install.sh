@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.3.0"
+SCRIPT_VERSION="v0.3.1"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -86,16 +86,21 @@ create_directories() {
     mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data" "${INSTALL_DIR}/certs"
 }
 
-# ----- ESSL Installation and SSL Certificate Handling -----
+# ----- Enhanced ESSL Installation and SSL Certificate Handling -----
 
 install_essl() {
     log "Installing the ESSL script..."
-    sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/ESSL/master/essl.sh)" @ --install
-    success "ESSL script installed successfully."
+    # Redirect output and errors to a log file for debugging
+    sudo bash -c "$(curl -sL https://raw.githubusercontent.com/erfjab/ESSL/master/essl.sh)" @ --install &> "${INSTALL_DIR}/essl_install.log"
+    if [[ $? -eq 0 ]]; then
+        success "ESSL script installed successfully."
+    else
+        error "Failed to install ESSL. Check the log at ${INSTALL_DIR}/essl_install.log for details."
+    fi
 }
 
 prompt_domain_and_generate_cert() {
-    local email="user@example.com"  # Replace with your actual email if desired
+    local email="your-email@example.com"  # Replace with your actual email
     local domain
     local certs_dir="/var/lib/marznode/certs"
 
@@ -113,11 +118,15 @@ prompt_domain_and_generate_cert() {
     fi
 
     log "Generating SSL certificates using ESSL..."
-    essl "$email" "$domain" "$certs_dir"
-    success "SSL certificates generated and stored in $certs_dir."
+    essl "$email" "$domain" "$certs_dir" &> "${INSTALL_DIR}/essl_generate.log"
+    if [[ $? -eq 0 ]]; then
+        success "SSL certificates generated and stored in $certs_dir."
+    else
+        error "Failed to generate SSL certificates. Check the log at ${INSTALL_DIR}/essl_generate.log for details."
+    fi
 }
 
-# ----- End of ESSL Integration -----
+# ----- End of Enhanced ESSL Integration -----
 
 show_xray_versions() {
     log "Available Xray versions:"
