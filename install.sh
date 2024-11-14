@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.3.1"
+SCRIPT_VERSION="v0.3.2"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -100,7 +100,7 @@ install_essl() {
 }
 
 prompt_domain_and_generate_cert() {
-    local email="your-email@example.com"  # Replace with your actual email
+    local email="user@gmail.com"  # Replace with your actual email
     local domain
     local certs_dir="/var/lib/marznode/certs"
 
