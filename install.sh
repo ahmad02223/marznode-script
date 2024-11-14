@@ -206,8 +206,8 @@ install_marznode() {
 
     local port
     while true; do
-        read -p "Enter the service port (default: 5566): " port
-        port=${port:-5566}
+        read -p "Enter the service port (default: 53042): " port
+        port=${port:-53042}
         
         if ! ss -tuln | grep -q ":$port "; then
             break
@@ -222,6 +222,7 @@ install_marznode() {
     fi
     git clone "$GITHUB_REPO" "${INSTALL_DIR}/repo"
     cp "${INSTALL_DIR}/repo/xray_config.json" "${INSTALL_DIR}/xray_config.json"
+    cp "${INSTALL_DIR}/repo/hysteria.yaml" "${INSTALL_DIR}/hysteria.yaml"
     
     while true; do
         if select_xray_version; then
