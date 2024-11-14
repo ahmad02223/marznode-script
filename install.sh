@@ -182,6 +182,9 @@ services:
       SSL_CLIENT_CERT_FILE: "/var/lib/marznode/client.pem"
       SSL_KEY_FILE: "./server.key"
       SSL_CERT_FILE: "./server.cert"
+      HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
+      HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
+      HYSTERIA_ENABLED: "True"
     volumes:
       - ${INSTALL_DIR}:/var/lib/marznode
 EOF
