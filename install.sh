@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.2.4"
+SCRIPT_VERSION="v0.2.6"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -312,7 +312,7 @@ install_script() {
     
     curl -s -o "$script_path" $SCRIPT_URL
     chmod +x "$script_path"
-    success "Script installed successfully. You can now use '$SCRIPT_NAME' command from anywhere."
+    success "Script installed successfully. Script Version: $SCRIPT_VERSION. You can now use '$SCRIPT_NAME' command from anywhere."
 }
 
 uninstall_script() {
