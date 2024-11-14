@@ -9,7 +9,7 @@ SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode/main/install.s
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
 COMPOSE_FILE="${INSTALL_DIR}/docker-compose.yml"
-GITHUB_REPO="https://github.com/marzneshin/marznode.git"
+GITHUB_REPO="https://github.com/ahmad02223/marznode.git"
 GITHUB_API="https://api.github.com/repos/XTLS/Xray-core/releases"
 
 declare -r -A COLORS=(
@@ -182,9 +182,6 @@ services:
       SSL_CLIENT_CERT_FILE: "/var/lib/marznode/client.pem"
       SSL_KEY_FILE: "./server.key"
       SSL_CERT_FILE: "./server.cert"
-      HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
-      HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
-      HYSTERIA_ENABLED: "True"
     volumes:
       - ${INSTALL_DIR}:/var/lib/marznode
 EOF
