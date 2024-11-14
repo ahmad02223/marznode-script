@@ -5,7 +5,7 @@ IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
 SCRIPT_VERSION="v0.1.0"
-SCRIPT_URL="https://raw.githubusercontent.com/erfjab/marznode/main/install.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
 COMPOSE_FILE="${INSTALL_DIR}/docker-compose.yml"
