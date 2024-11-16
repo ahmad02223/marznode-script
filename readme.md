@@ -1,8 +1,8 @@
 # MarzNode Script
 
-## Note: In this fork of script, hysteria is activated automatically when adding a node.
+## Note: In this fork of script, hysteria is activated automatically during adding a node.
 
-The `marznode` script helps manage the installation, updates and maintenance of MarzNode and its Xray core dependencies. This tool includes commands for installing and controlling the MarzNode service (with `custom xray version`), as well as a built-in system for checking and installing required dependencies.
+The `marznode` script helps manage the installation, updates and maintenance of MarzNode and its Xray core dependencies. This tool includes commands for installing and controlling the MarzNode service (with `custom xray version` and `hysteria2`), as well as a built-in system for checking and installing required dependencies.
 
 ## Features
 
