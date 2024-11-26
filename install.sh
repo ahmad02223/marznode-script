@@ -185,6 +185,11 @@ services:
       HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
       HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
       HYSTERIA_ENABLED: "True"
+      SING_BOX_ENABLED: "True"
+      SING_BOX_EXECUTABLE_PATH: "/usr/local/bin/sing-box"
+      SING_BOX_CONFIG_PATH: "/var/lib/marznode/sing-box/config.json"
+      SING_BOX_RESTART_ON_FAILURE: "True"
+      SING_BOX_RESTART_ON_FAILURE_INTERVAL: "1"
     volumes:
       - ${INSTALL_DIR}:/var/lib/marznode
 EOF
