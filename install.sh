@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v2"
+SCRIPT_VERSION="v2.1"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -177,7 +177,7 @@ select_singbox_version() {
     show_singbox_versions
     local choice
     read -p "Select Singbox version (1-10): " choice
-    local selected_version=$(curl -s "$GITHUB_API" | jq -r ".[0:10] | .[$((choice-1))] | .tag_name")
+    local selected_version=$(curl -s "$GITHUB_SINGBOX_API" | jq -r ".[0:10] | .[$((choice-1))] | .tag_name")
 
     echo "Selected Singbox version: $selected_version"
     while true; do
@@ -251,17 +251,17 @@ services:
       XRAY_EXECUTABLE_PATH: "/var/lib/marznode/xray"
       XRAY_ASSETS_PATH: "/var/lib/marznode/data"
       XRAY_CONFIG_PATH: "/var/lib/marznode/xray_config.json"
-      SSL_CLIENT_CERT_FILE: "/var/lib/marznode/client.pem"
-      SSL_KEY_FILE: "./server.key"
-      SSL_CERT_FILE: "./server.cert"
+      HYSTERIA_ENABLED: "True"
       HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
       HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
-      HYSTERIA_ENABLED: "True"
       SING_BOX_ENABLED: "True"
       SING_BOX_EXECUTABLE_PATH: "/var/lib/marznode/singbox"
       SING_BOX_CONFIG_PATH: "/var/lib/marznode/singbox_config.json"
       SING_BOX_RESTART_ON_FAILURE: "True"
       SING_BOX_RESTART_ON_FAILURE_INTERVAL: "0"
+      SSL_KEY_FILE: "./server.key"
+      SSL_CERT_FILE: "./server.cert"
+      SSL_CLIENT_CERT_FILE: "/var/lib/marznode/client.pem"
     volumes:
       - ${INSTALL_DIR}:/var/lib/marznode
 EOF
