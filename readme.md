@@ -29,9 +29,18 @@ To install the script itself and be able to run it from anywhere, follow these s
   ```bash
   tar -xzf /var/lib/marznode/singbox/sing-box-amd.tar.gz
   ```
+# 
+  ```bash
+  marznode restart
+  ```
+
 # for arm:
   ```bash
   tar -xzf /var/lib/marznode/singbox/sing-box-arm.tar.gz
+  ```
+# 
+  ```bash
+  marznode restart
   ```
 
 ## Usage
