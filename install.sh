@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v2.1.2"
+SCRIPT_VERSION="v3"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -177,6 +177,7 @@ services:
     image: dawsh/marznode:latest
     restart: always
     network_mode: host
+    command: [ "sh", "-c", "sleep 10 && python3 marznode.py" ]
     environment:
       SERVICE_PORT: "$port"
       XRAY_EXECUTABLE_PATH: "/var/lib/marznode/xray"
@@ -232,7 +233,8 @@ install_marznode() {
     cp "${INSTALL_DIR}/repo/xray_config.json" "${INSTALL_DIR}/xray_config.json"
     cp "${INSTALL_DIR}/repo/hysteria.yaml" "${INSTALL_DIR}/hysteria.yaml"
     cp "${INSTALL_DIR}/repo/singbox_config.json" "${INSTALL_DIR}/singbox_config.json"
-     cp "${INSTALL_DIR}/repo/singbox" "${INSTALL_DIR}/singbox"
+    cp "${INSTALL_DIR}/repo/sing-box-1.10.5-amd64.tar.gz" "${INSTALL_DIR}/singbox/sing-box-amd.tar.gz"
+    cp "${INSTALL_DIR}/repo/sing-box-1.10.5-arm64.tar.gz" "${INSTALL_DIR}/singbox/sing-box-arm.tar.gz"
     
     while true; do
         if select_xray_version; then
