@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v2.1.1"
+SCRIPT_VERSION="v2.1.2"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -85,7 +85,7 @@ is_running() { docker ps | grep -q "marznode"; }
 
 create_directories() {
     mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data"
-    mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data1"
+    mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/singbox"
 }
 
 get_certificate() {
@@ -169,79 +169,6 @@ download_xray_core() {
 }
 
 
-show_singbox_versions() {
-    log "Available Singbox versions:"
-    curl -s "$GITHUB_SINGBOX_API" | jq -r '.[0:10] | .[] | .tag_name' | nl
-}
-
-select_singbox_version() {
-    show_singbox_versions
-    local choice
-    read -p "Select Singbox version (1-10): " choice
-    local selected_version=$(curl -s "$GITHUB_SINGBOX_API" | jq -r ".[0:10] | .[$((choice-1))] | .tag_name")
-
-    echo "Selected Singbox version: $selected_version"
-    while true; do
-        read -p "Confirm selection? (Y/n): " confirm
-        if [[ $confirm =~ ^[Yy]$ ]] || [[ -z $confirm ]]; then
-            download_singbox_core "$selected_version"
-            return 0
-        elif [[ $confirm =~ ^[Nn]$ ]]; then
-            echo "Selection cancelled. Please choose again."
-            return 1
-        else
-            echo "Invalid input. Please enter Y or n."
-        fi
-    done
-}
-
-
-download_singbox_core() {
-    local version="$1"
-    case "$(uname -m)" in
-        'i386' | 'i686') arch='32' ;;
-        'amd64' | 'x86_64') arch='64' ;;
-        'armv5tel') arch='arm32-v5' ;;
-        'armv6l')
-        arch='arm32-v6'
-        grep Features /proc/cpuinfo | grep -qw 'vfp' || arch='arm32-v5'
-        ;;
-        'armv7' | 'armv7l')
-        arch='arm32-v7a'
-        grep Features /proc/cpuinfo | grep -qw 'vfp' || arch='arm32-v5'
-        ;;
-        'armv8' | 'aarch64') arch='arm64-v8a' ;;
-        'mips') arch='mips32' ;;
-        'mipsle') arch='mips32le' ;;
-        'mips64')
-        arch='mips64'
-        lscpu | grep -q "Little Endian" && arch='mips64le'
-        ;;
-        'mips64le') arch='mips64le' ;;
-        'ppc64') arch='ppc64' ;;
-        'ppc64le') arch='ppc64le' ;;
-        'riscv64') arch='riscv64' ;;
-        's390x') arch='s390x' ;;
-        *)
-        print_error "Error: The architecture is not supported."
-        exit 1
-        ;;
-    esac
-    local singbox_filename="Singbox-linux-${arch}.zip"
-    local download_url="https://github.com/SagerNet/sing-box/releases/download/${version}/${Singbox_filename}"
-
-    wget -q --show-progress "$download_url" -O "/tmp/${singbox_filename}"
-    unzip -o "/tmp/${singbox_filename}" -d "${INSTALL_DIR}"
-    rm "/tmp/${singbox_filename}"
-
-    chmod +x "${INSTALL_DIR}/singbox"
-
-    wget -q --show-progress "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat" -O "${INSTALL_DIR}/data1/geoip.dat"
-    wget -q --show-progress "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat" -O "${INSTALL_DIR}/data1/geosite.dat"
-
-    success "Singbox-core ${version} installed successfully."
-}
-
 setup_docker_compose() {
     local port="${1:-5566}"
     cat > "$COMPOSE_FILE" <<EOF
@@ -305,6 +232,7 @@ install_marznode() {
     cp "${INSTALL_DIR}/repo/xray_config.json" "${INSTALL_DIR}/xray_config.json"
     cp "${INSTALL_DIR}/repo/hysteria.yaml" "${INSTALL_DIR}/hysteria.yaml"
     cp "${INSTALL_DIR}/repo/singbox_config.json" "${INSTALL_DIR}/singbox_config.json"
+     cp "${INSTALL_DIR}/repo/singbox" "${INSTALL_DIR}/singbox"
     
     while true; do
         if select_xray_version; then
