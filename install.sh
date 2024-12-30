@@ -187,7 +187,7 @@ services:
       HYSTERIA_ENABLED: "True"
       SING_BOX_ENABLED: "True"
       SING_BOX_EXECUTABLE_PATH: "/usr/local/bin/sing-box"
-      SING_BOX_CONFIG_PATH: "/var/lib/marznode/sing-box.json"
+      SING_BOX_CONFIG_PATH: "/var/lib/marznode/singbox_config.json"
       SING_BOX_RESTART_ON_FAILURE: "True"
       SING_BOX_RESTART_ON_FAILURE_INTERVAL: "0"
     volumes:
