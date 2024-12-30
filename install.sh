@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v0.0.1"
+SCRIPT_VERSION="v0.0.2"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -185,6 +185,11 @@ services:
       HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
       HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
       HYSTERIA_ENABLED: "True"
+      SING_BOX_ENABLED: "True"
+      SING_BOX_EXECUTABLE_PATH: "/usr/local/bin/sing-box"
+      SING_BOX_CONFIG_PATH: "/var/lib/marznode/sing-box.json"
+      SING_BOX_RESTART_ON_FAILURE: "True"
+      SING_BOX_RESTART_ON_FAILURE_INTERVAL: "0"
     volumes:
       - ${INSTALL_DIR}:/var/lib/marznode
 EOF
@@ -223,6 +228,7 @@ install_marznode() {
     git clone "$GITHUB_REPO" "${INSTALL_DIR}/repo"
     cp "${INSTALL_DIR}/repo/xray_config.json" "${INSTALL_DIR}/xray_config.json"
     cp "${INSTALL_DIR}/repo/hysteria.yaml" "${INSTALL_DIR}/hysteria.yaml"
+    cp "${INSTALL_DIR}/repo/singbox_config.json" "${INSTALL_DIR}/singbox_config.json"
     
     while true; do
         if select_xray_version; then
