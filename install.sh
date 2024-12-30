@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v2.1"
+SCRIPT_VERSION="v2.1.1"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -85,6 +85,7 @@ is_running() { docker ps | grep -q "marznode"; }
 
 create_directories() {
     mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data"
+    mkdir -p "$INSTALL_DIR" "${INSTALL_DIR}/data1"
 }
 
 get_certificate() {
@@ -183,7 +184,7 @@ select_singbox_version() {
     while true; do
         read -p "Confirm selection? (Y/n): " confirm
         if [[ $confirm =~ ^[Yy]$ ]] || [[ -z $confirm ]]; then
-            download_xray_core "$selected_version"
+            download_singbox_core "$selected_version"
             return 0
         elif [[ $confirm =~ ^[Nn]$ ]]; then
             echo "Selection cancelled. Please choose again."
@@ -234,6 +235,9 @@ download_singbox_core() {
     rm "/tmp/${singbox_filename}"
 
     chmod +x "${INSTALL_DIR}/singbox"
+
+    wget -q --show-progress "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat" -O "${INSTALL_DIR}/data1/geoip.dat"
+    wget -q --show-progress "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat" -O "${INSTALL_DIR}/data1/geosite.dat"
 
     success "Singbox-core ${version} installed successfully."
 }
