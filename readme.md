@@ -27,7 +27,7 @@ To install the script itself and be able to run it from anywhere, follow these s
 
 # for amd:
   ```bash
-  cd /var/lib/marznode/singbox/ && tar -xzf sing-box-amd.tar.gz
+  cd /var/lib/marznode/singbox/ && tar -xzf sing-box-amd.tar.gz && cp /var/lib/marznode/singbox/sing-box-1.10.5-linux-amd64/sing-box /var/lib/marznode/sing-box
   ```
 # 
   ```bash
@@ -36,7 +36,7 @@ To install the script itself and be able to run it from anywhere, follow these s
 
 # for arm:
   ```bash
-  cd /var/lib/marznode/singbox/ && tar -xzf sing-box-arm.tar.gz
+  cd /var/lib/marznode/singbox/ && tar -xzf sing-box-arm.tar.gz && cp /var/lib/marznode/singbox/sing-box-1.10.5-linux-arm64/sing-box /var/lib/marznode/sing-box
   ```
 # 
   ```bash
