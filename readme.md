@@ -23,6 +23,17 @@ To install the script itself and be able to run it from anywhere, follow these s
 
 2. You can now run the script using the `marznode` command.
 
+## Setup Sing-Box core:
+
+# for amd:
+  ```bash
+  tar -xzf /var/lib/marznode/singbox/sing-box-1.10.5-amd64.tar.gz
+  ```
+# for arm:
+  ```bash
+  tar -xzf /var/lib/marznode/singbox/sing-box-1.10.5-arm64.tar.gz
+  ```
+
 ## Usage
 
 After installation, the script provides multiple commands to manage MarzNode. Here are the basic commands you can use:
