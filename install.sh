@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 SCRIPT_NAME="marznode"
-SCRIPT_VERSION="v3"
+SCRIPT_VERSION="v3.0.1"
 SCRIPT_URL="https://raw.githubusercontent.com/ahmad02223/marznode-script/main/install.sh"
 INSTALL_DIR="/var/lib/marznode"
 LOG_FILE="${INSTALL_DIR}/marznode.log"
@@ -187,7 +187,7 @@ services:
       HYSTERIA_EXECUTABLE_PATH: "/usr/local/bin/hysteria"
       HYSTERIA_CONFIG_PATH: "/var/lib/marznode/hysteria.yaml"
       SING_BOX_ENABLED: "True"
-      SING_BOX_EXECUTABLE_PATH: "/var/lib/marznode/singbox"
+      SING_BOX_EXECUTABLE_PATH: "/var/lib/marznode/sing-box"
       SING_BOX_CONFIG_PATH: "/var/lib/marznode/singbox_config.json"
       SING_BOX_RESTART_ON_FAILURE: "True"
       SING_BOX_RESTART_ON_FAILURE_INTERVAL: "0"
